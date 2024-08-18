@@ -1,0 +1,16 @@
+{
+  "name": "blogging-site",
+  "version": "1.0.0",
+  "description": "A Blogging web app",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "author": "Sayak",
+  "license": "ISC",
+  "dependencies": {
+    "express-fileupload": "^1.5.1",
+    "express.js": "^1.0.0",
+    "nodemon": "^3.1.4"
+  }
+}

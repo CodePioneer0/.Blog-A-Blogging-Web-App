@@ -13,6 +13,9 @@ app.get("/", (req, res) => {
 app.get("/editor", (req, res) => {
   res.sendFile(path.join(initial_path, "editor.html"));
 });
+app.get("/about", (req, res) => {
+  res.sendFile(path.join(initial_path, "about.html"));
+});
 app.post("/upload", (req, res) => {
   let file = req.files.image;
   let date = new Date();
@@ -33,8 +36,8 @@ app.post("/upload", (req, res) => {
 });
 
 app.get("/:blog", (req, res) => {
-    res.sendFile(path.join(initial_path, "blog.html"));
-})
+  res.sendFile(path.join(initial_path, "blog.html"));
+});
 
 app.use((req, res) => {
   res.json("404");

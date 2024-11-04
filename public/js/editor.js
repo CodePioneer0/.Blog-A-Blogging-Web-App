@@ -78,9 +78,8 @@ publishBtn.addEventListener("click", () => {
 
     // setting up docName
     let docName = `${blogTitle}-${id}`;
-    let date = new Date(); // for published at info
+    let date = new Date(); 
 
-    //access firstore with db variable;
     db.collection("blogs")
       .doc(docName)
       .set({

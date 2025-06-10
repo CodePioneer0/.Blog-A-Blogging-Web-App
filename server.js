@@ -40,9 +40,13 @@ app.get("/:blog", (req, res) => {
 });
 
 app.use((req, res) => {
-  res.json("404");
+  res.status(404).json({ error: "Page not found" });
 });
 
-app.listen("3000", () => {
-  console.log("Server Listening on port 3000....");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server Listening on port ${PORT}....`);
 });
+
+module.exports = app;

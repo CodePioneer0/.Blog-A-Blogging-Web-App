@@ -6,9 +6,24 @@ const firebaseConfig = {
   messagingSenderId: "739726643128",
   appId: "1:739726643128:web:5af9e2bf942fa7f526494d",
 };
- // Initialize Firebase
- const app = firebase.initializeApp(firebaseConfig);
 
- // Initialize Firestore
- const db = firebase.firestore();
+// Initialize Firebase
+try {
+  const app = firebase.initializeApp(firebaseConfig);
+  console.log("Firebase initialized successfully");
 
+  // Initialize Firestore
+  const db = firebase.firestore();
+  console.log("Firestore initialized successfully");
+
+  // Test connection
+  db.enableNetwork()
+    .then(() => {
+      console.log("Firestore connection enabled");
+    })
+    .catch((error) => {
+      console.error("Error enabling Firestore network:", error);
+    });
+} catch (error) {
+  console.error("Error initializing Firebase:", error);
+}

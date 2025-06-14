@@ -1,0 +1,24 @@
+{
+  "functions": {
+    "server.js": {
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/firebase-config",
+      "destination": "/api/firebase-config"
+    },
+    {
+      "source": "/upload",
+      "destination": "/api/upload"
+    },
+    {
+      "source": "/((?!api|_next|_static|favicon.ico).*)",
+      "destination": "/api/server"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}

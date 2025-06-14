@@ -1,13 +1,36 @@
 let blogId = decodeURI(location.pathname.split("/").pop());
 
-// Use the global waitForFirebase function
-(window.waitForFirebase || waitForFirebase)()
-  .then((database) => {
+// Function to load blog with better error handling
+const loadBlog = async () => {
+  try {
+    console.log("Starting to load blog:", blogId);
+    console.log("Available globals:", {
+      waitForFirebase: typeof window.waitForFirebase,
+      db: typeof window.db,
+      firebase: typeof firebase,
+    });
+
+    // Wait for Firebase to be ready using multiple fallback methods
+    let database;
+    if (window.waitForFirebase) {
+      console.log("Using window.waitForFirebase...");
+      database = await window.waitForFirebase();
+    } else if (window.db) {
+      console.log("Using window.db...");
+      database = window.db;
+    } else if (typeof db !== "undefined") {
+      console.log("Using global db...");
+      database = db;
+    } else {
+      throw new Error(
+        "Firebase database not available. Please refresh the page."
+      );
+    }
+
     console.log("Firebase ready, fetching blog:", blogId);
     let docRef = database.collection("blogs").doc(blogId);
-    return docRef.get();
-  })
-  .then((doc) => {
+    const doc = await docRef.get();
+
     if (doc.exists) {
       console.log("Blog found, setting up...");
       setupBlog(doc.data());
@@ -22,22 +45,36 @@ let blogId = decodeURI(location.pathname.split("/").pop());
         </div>
       `;
     }
-  })
-  .catch((error) => {
+  } catch (error) {
     console.error("Error fetching blog:", error);
     document.body.innerHTML = `
       <div style="text-align: center; padding: 50px; font-family: Arial, sans-serif;">
         <h1>Error Loading Blog</h1>
-        <p>There was an error loading this blog: ${error.message}</p>
-        <button onclick="location.reload()" style="padding: 10px 20px; margin: 10px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        <p><strong>Error:</strong> ${error.message}</p>
+        <p>Please check your internet connection and try again.</p>
+        <button onclick="loadBlog()" style="padding: 10px 20px; margin: 10px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
           Retry
+        </button>
+        <button onclick="location.reload()" style="padding: 10px 20px; margin: 10px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">
+          Refresh Page
         </button>
         <a href="/" style="display: inline-block; padding: 10px 20px; margin: 10px; color: #007bff; text-decoration: none; border: 1px solid #007bff; border-radius: 5px;">
           Go back to home
         </a>
       </div>
     `;
-  });
+  }
+};
+
+// Start loading blog when page loads
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", loadBlog);
+} else {
+  loadBlog();
+}
+
+// Make loadBlog globally accessible for retry button
+window.loadBlog = loadBlog;
 
 // Simple HTML sanitization function
 const sanitizeHTML = (str) => {

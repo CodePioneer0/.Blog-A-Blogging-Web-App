@@ -112,11 +112,12 @@ const initializeFirebase = async () => {
       )
     );
 
-    await Promise.race([testPromise, timeoutPromise]);    console.log("Firestore connection and permissions verified");
-    
+    await Promise.race([testPromise, timeoutPromise]);
+    console.log("Firestore connection and permissions verified");
+
     // Make db available globally
     window.db = db;
-    
+
     firebaseInitialized = true;
     return true;
   } catch (error) {
@@ -189,7 +190,7 @@ const waitForFirebase = () => {
 
     const checkFirebase = () => {
       attempts++;
-      if (firebaseInitialized && db && typeof firebase !== 'undefined') {
+      if (firebaseInitialized && db && typeof firebase !== "undefined") {
         resolve(db);
       } else if (attempts >= maxAttempts) {
         reject(new Error("Firebase initialization timeout"));
@@ -203,21 +204,61 @@ const waitForFirebase = () => {
 
 // Helper function to get server timestamp safely
 const getServerTimestamp = () => {
-  if (typeof firebase !== 'undefined' && firebase.firestore) {
+  if (typeof firebase !== "undefined" && firebase.firestore) {
     return firebase.firestore.FieldValue.serverTimestamp();
   } else {
-    console.warn('Firebase not available, using client timestamp');
+    console.warn("Firebase not available, using client timestamp");
     return new Date();
   }
 };
 
+// Diagnostic function to test Firebase connectivity
+const testFirebaseConnectivity = async () => {
+  try {
+    console.log("Testing basic Firebase connectivity...");
+
+    if (!window.db) {
+      throw new Error("Database not initialized");
+    }
+
+    // Simple test - try to access the collection
+    const testCollection = window.db.collection("blogs");
+    console.log("✅ Collection access: OK");
+
+    // Try a simple query
+    const testQuery = await testCollection.limit(1).get();
+    console.log("✅ Query execution: OK", `Found ${testQuery.size} documents`);
+
+    return true;
+  } catch (error) {
+    console.error("❌ Firebase connectivity test failed:", error);
+    return false;
+  }
+};
+
 // Initialize Firebase when DOM is ready
+const startFirebaseInit = () => {
+  console.log("Starting Firebase initialization...");
+  initializeFirebase().then((success) => {
+    if (success) {
+      console.log("Firebase initialization completed successfully");
+      // Trigger a custom event that other scripts can listen to
+      window.dispatchEvent(
+        new CustomEvent("firebaseReady", { detail: { db: window.db } })
+      );
+    } else {
+      console.error("Firebase initialization failed");
+    }
+  });
+};
+
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initializeFirebase);
+  document.addEventListener("DOMContentLoaded", startFirebaseInit);
 } else {
-  initializeFirebase();
+  startFirebaseInit();
 }
 
 // Export for other scripts
 window.waitForFirebase = waitForFirebase;
 window.getServerTimestamp = getServerTimestamp;
+window.testFirebaseConnectivity = testFirebaseConnectivity;

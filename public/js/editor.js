@@ -116,30 +116,42 @@ publishBtn.addEventListener("click", () => {
       .join("-")
       .toLowerCase()
       .replace(/[^a-z0-9-]/g, ""); // Remove special characters
-    let uniqueId = generateUniqueId();
-
-    // setting up docName
+    let uniqueId = generateUniqueId(); // setting up docName
     let docName = `${blogTitle}-${uniqueId}`;
-    let date = new Date();    // Disable publish button to prevent double publishing
-    publishBtn.disabled = true;
-    publishBtn.textContent = "Publishing...";
+    let date = new Date();
 
-    // Use the global waitForFirebase function
-    (window.waitForFirebase || waitForFirebase)()
+    // Disable publish button to prevent double publishing
+    publishBtn.disabled = true;
+    publishBtn.textContent = "Publishing..."; // Use the global waitForFirebase function
+    console.log("Attempting to publish blog...");
+    console.log("Available globals:", {
+      waitForFirebase: typeof window.waitForFirebase,
+      db: typeof window.db,
+      firebase: typeof firebase,
+    });
+
+    (
+      window.waitForFirebase ||
+      (() => Promise.reject(new Error("Firebase not initialized")))
+    )()
       .then((database) => {
         console.log("Firebase ready, publishing blog...");
-        return database
-          .collection("blogs")
-          .doc(docName)
-          .set({
-            title: blogTitleField.value,
-            article: articleFeild.value,
-            bannerImage: bannerPath,
-            publishedAt: `${date.getDate()} ${
-              months[date.getMonth()]
-            } ${date.getFullYear()}`,
-            createdAt: window.getServerTimestamp ? window.getServerTimestamp() : new Date(),
-          });
+        console.log("Database object:", database);
+
+        const blogData = {
+          title: blogTitleField.value,
+          article: articleFeild.value,
+          bannerImage: bannerPath,
+          publishedAt: `${date.getDate()} ${
+            months[date.getMonth()]
+          } ${date.getFullYear()}`,
+          createdAt: window.getServerTimestamp
+            ? window.getServerTimestamp()
+            : new Date(),
+        };
+
+        console.log("Blog data:", blogData);
+        return database.collection("blogs").doc(docName).set(blogData);
       })
       .then(() => {
         console.log("Blog published successfully");

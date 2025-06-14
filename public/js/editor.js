@@ -120,9 +120,7 @@ publishBtn.addEventListener("click", () => {
 
     // setting up docName
     let docName = `${blogTitle}-${uniqueId}`;
-    let date = new Date();
-
-    // Disable publish button to prevent double publishing
+    let date = new Date();    // Disable publish button to prevent double publishing
     publishBtn.disabled = true;
     publishBtn.textContent = "Publishing...";
 
@@ -140,7 +138,7 @@ publishBtn.addEventListener("click", () => {
             publishedAt: `${date.getDate()} ${
               months[date.getMonth()]
             } ${date.getFullYear()}`,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            createdAt: window.getServerTimestamp ? window.getServerTimestamp() : new Date(),
           });
       })
       .then(() => {

@@ -112,9 +112,11 @@ const initializeFirebase = async () => {
       )
     );
 
-    await Promise.race([testPromise, timeoutPromise]);
-    console.log("Firestore connection and permissions verified");
-
+    await Promise.race([testPromise, timeoutPromise]);    console.log("Firestore connection and permissions verified");
+    
+    // Make db available globally
+    window.db = db;
+    
     firebaseInitialized = true;
     return true;
   } catch (error) {
@@ -187,7 +189,7 @@ const waitForFirebase = () => {
 
     const checkFirebase = () => {
       attempts++;
-      if (firebaseInitialized && db) {
+      if (firebaseInitialized && db && typeof firebase !== 'undefined') {
         resolve(db);
       } else if (attempts >= maxAttempts) {
         reject(new Error("Firebase initialization timeout"));
@@ -199,6 +201,16 @@ const waitForFirebase = () => {
   });
 };
 
+// Helper function to get server timestamp safely
+const getServerTimestamp = () => {
+  if (typeof firebase !== 'undefined' && firebase.firestore) {
+    return firebase.firestore.FieldValue.serverTimestamp();
+  } else {
+    console.warn('Firebase not available, using client timestamp');
+    return new Date();
+  }
+};
+
 // Initialize Firebase when DOM is ready
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", initializeFirebase);
@@ -208,3 +220,4 @@ if (document.readyState === "loading") {
 
 // Export for other scripts
 window.waitForFirebase = waitForFirebase;
+window.getServerTimestamp = getServerTimestamp;

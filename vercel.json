@@ -8,8 +8,28 @@
   ],
   "routes": [
     {
+      "src": "/firebase-config",
+      "dest": "server.js"
+    },
+    {
+      "src": "/upload",
+      "dest": "server.js"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "server.js"
+    },
+    {
       "src": "/(.*)",
       "dest": "server.js"
     }
-  ]
+  ],
+  "functions": {
+    "server.js": {
+      "maxDuration": 30
+    }
+  },
+  "env": {
+    "NODE_ENV": "production"
+  }
 }

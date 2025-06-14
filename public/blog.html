@@ -7,7 +7,7 @@
     <title>Blog : View</title>
     <link rel="stylesheet" href="css/blog.css">
 </head>
-    <nav class="navbar"></nav>
+
 <body>
     <nav class="navbar">
         <img src="img/logo.png" class="logo" alt="">
@@ -40,6 +40,19 @@
     </section>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-firestore.js"></script>
+    <script>
+        // Check if Firebase loaded properly
+        if (typeof firebase === 'undefined') {
+            console.error('Firebase failed to load from CDN');
+            document.body.innerHTML = `
+          <div style="text-align: center; padding: 50px;">
+            <h1>Connection Error</h1>
+            <p>Unable to load required resources. Please check your internet connection and refresh the page.</p>
+            <button onclick="location.reload()" style="padding: 10px 20px; margin-top: 20px;">Refresh Page</button>
+          </div>
+        `;
+        }
+    </script>
     <script src="js/firebase.js"></script>
     <script src="js/blog.js"></script>
     <script src="js/home.js"></script>

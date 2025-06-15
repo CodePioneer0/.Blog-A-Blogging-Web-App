@@ -4,60 +4,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A modern blogging platform where you can express your thoughts and ideas">
+    <meta name="keywords" content="blog, writing, articles, stories, thoughts">
+    <meta name="author" content="Blog Platform">
     <title>.Blog : A Place To Express</title>
     <link rel="stylesheet" href="css/home.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/png" href="img/logo.png">
 </head>
 
 <body>
-    <nav class="navbar">
-        <img src="img/logo.png" class="logo" alt="">
-        <ul class="links-container">
-            <li class="link-item"><a href="/" class="link">home</a></li>
-            <li class="link-item"><a href="/editor" class="link">Write</a></li>
-            <li class="link-item"><a href="/about" class="link">About Us</a></li>
-        </ul>
-    </nav>
-    <header class="header">
-        <div class="content">
-            <h1 class="heading">
-                <span class="small">Welcome To The World Of</span>
-                Blog
-                <span class="no-fill">Writing</span>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-spinner"></div>
+        <p>Loading amazing content...</p>
+    </div>
 
-            </h1>
-            <a href="/editor" class="btn">Write A Blog</a>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="img/logo.png" class="logo" alt="Blog Logo" loading="lazy">
+                <span class="brand-text">.Blog</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/" class="nav-link active" aria-current="page">Home</a></li>
+                <li><a href="/editor" class="nav-link">Write</a></li>
+                <li><a href="/about" class="nav-link">About</a></li>
+            </ul>
+            <button class="mobile-menu-toggle" aria-label="Toggle mobile menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-content">
+            <div class="hero-text">
+                <span class="hero-subtitle">Welcome to the world of</span>
+                <h1 class="hero-title">
+                    Creative
+                    <span class="hero-highlight">Writing</span>
+                </h1>
+                <p class="hero-description">
+                    Share your thoughts, stories, and ideas with the world.
+                    Join our community of passionate writers and readers.
+                </p>
+                <div class="hero-actions">
+                    <a href="/editor" class="btn btn-primary">Start Writing</a>
+                    <a href="#blogs" class="btn btn-secondary">Explore Blogs</a>
+                </div>
+            </div>
+        </div>
+        <div class="hero-scroll-indicator">
+            <span>Scroll to explore</span>
+            <div class="scroll-arrow"></div>
         </div>
     </header>
-    <section class="blogs-section">
-        <!-- <div class="blog-card">
-          <img src="img/img2.jpg" class="blog-image" alt="">
-          <h1 class="blog-title">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus, officiis.</h1>
-          <p class="blog-overview">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum hic enim, expedita
-              dicta obcaecati numquam mollitia praesentium aliquam nam placeat impedit quia dignissimos illum
-              assumenda quod.</p>
-          <a href="/" class="btn dark">Read</a>
-      </div> -->
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" data-count="0">0</div>
+                    <div class="stat-label">Published Blogs</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-count="0">0</div>
+                    <div class="stat-label">Active Writers</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-count="0">0</div>
+                    <div class="stat-label">Total Reads</div>
+                </div>
+            </div>
+        </div>
     </section>
+
+    <!-- Blogs Section -->
+    <section class="blogs-section" id="blogs">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Latest Stories</h2>
+                <p class="section-subtitle">Discover amazing content from our community</p>
+            </div>
+            <div class="blogs-grid" id="blogs-grid">
+                <!-- Blog cards will be dynamically inserted here -->
+            </div>
+            <div class="load-more-container">
+                <button class="btn btn-outline" id="load-more-btn" style="display: none;">Load More Stories</button>
+            </div>
+        </div>
+    </section>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-brand">
+                        <img src="img/logo.png" alt="Blog Logo" class="footer-logo">
+                        <span class="footer-brand-text">.Blog</span>
+                    </div>
+                    <p class="footer-description">
+                        A platform for creative minds to share their stories and connect with readers worldwide.
+                    </p>
+                </div>
+                <div class="footer-section">
+                    <h3 class="footer-title">Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/editor">Write</a></li>
+                        <li><a href="/about">About</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3 class="footer-title">Community</h3>
+                    <ul class="footer-links">
+                        <li><a href="#blogs">Latest Stories</a></li>
+                        <li><a href="/editor">Start Writing</a></li>
+                        <li><a href="#stats">Platform Stats</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 .Blog Platform. Made with ❤️ for writers and readers.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-firestore.js"></script>
     <script>
         // Check if Firebase loaded properly
         if (typeof firebase === 'undefined') {
             console.error('Firebase failed to load from CDN');
-            document.body.innerHTML = `
-          <div style="text-align: center; padding: 50px;">
-            <h1>Connection Error</h1>
-            <p>Unable to load required resources. Please check your internet connection and refresh the page.</p>
-            <button onclick="location.reload()" style="padding: 10px 20px; margin-top: 20px;">Refresh Page</button>
-          </div>
-        `;
+            document.getElementById('loading-screen').innerHTML = `
+                <div style="text-align: center; padding: 50px; color: white;">
+                    <h1>Connection Error</h1>
+                    <p>Unable to load required resources. Please check your internet connection and refresh the page.</p>
+                    <button onclick="location.reload()" style="padding: 10px 20px; margin-top: 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Refresh Page</button>
+                </div>
+            `;
         }
     </script>
     <script src="js/firebase.js"></script>
-    <script src="js/blog.js"></script>
     <script src="js/home.js"></script>
-
-
 
 </body>
 

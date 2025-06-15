@@ -46,3 +46,7 @@ Thumbs.db
 # Build outputs
 dist/
 build/
+.vercel
+
+# Uploads folder (using Cloudinary for production)
+public/uploads/

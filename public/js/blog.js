@@ -1,8 +1,33 @@
-let blogId = decodeURI(location.pathname.split("/").pop());
+// Extract and validate blog ID from URL
+const getBlogId = () => {
+  const pathSegments = location.pathname
+    .split("/")
+    .filter((segment) => segment.length > 0);
+  const blogId =
+    pathSegments.length > 0
+      ? decodeURI(pathSegments[pathSegments.length - 1])
+      : null;
+
+  // Validate blog ID format (should not be empty and should be alphanumeric with hyphens)
+  if (!blogId || blogId.trim() === "" || !/^[a-zA-Z0-9-_]+$/.test(blogId)) {
+    return null;
+  }
+
+  return blogId;
+};
+
+let blogId = getBlogId();
 
 // Function to load blog with better error handling
 const loadBlog = async () => {
   try {
+    // Check if we have a valid blog ID
+    if (!blogId) {
+      console.log("No valid blog ID found, redirecting to home");
+      window.location.href = "/";
+      return;
+    }
+
     console.log("Starting to load blog:", blogId);
     console.log("Available globals:", {
       waitForFirebase: typeof window.waitForFirebase,
@@ -28,6 +53,12 @@ const loadBlog = async () => {
     }
 
     console.log("Firebase ready, fetching blog:", blogId);
+
+    // Additional validation before making the Firebase call
+    if (!blogId || blogId.trim() === "") {
+      throw new Error("Invalid blog ID");
+    }
+
     let docRef = database.collection("blogs").doc(blogId);
     const doc = await docRef.get();
 

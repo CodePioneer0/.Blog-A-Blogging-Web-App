@@ -5,21 +5,28 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog : Editor</title>
-
-    <link rel="stylesheet" href="css/home.css">
+    <meta name="description" content="Write and publish your blog posts with our intuitive editor">
+    <title>Blog Editor - Write Your Story</title>
     <link rel="stylesheet" href="css/editor.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/png" href="img/logo.png">
 </head>
 
 <body>
-    <nav class="navbar">
-        <img src="img/logo.png" class="logo" alt="Blog Logo">
-        <ul class="links-container">
-            <li class="link-item"><a href="/" class="link">home</a></li>
-            <li class="link-item"><a href="/editor" class="link active">Write</a></li>
-            <li class="link-item"><a href="/about" class="link">About Us</a></li>
-        </ul>
-    </nav>
+    <!-- Back to Home Button -->
+    <div class="back-to-home">
+        <a href="/" class="back-btn" title="Back to Home">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+            <span>Back to Home</span>
+        </a>
+    </div>
 
     <div class="banner">
         <input type="file" accept="image/*" id="banner-upload" hidden>
@@ -27,8 +34,10 @@
     </div>
 
     <div class="blog">
-        <textarea type="text" class="title" placeholder="Blog title..."></textarea>
-        <textarea type="text" class="article" placeholder="Start writing here..."></textarea>
+        <textarea type="text" class="title"
+            placeholder="Your amazing title goes here... (No character limits!)"></textarea>
+        <textarea type="text" class="article"
+            placeholder="Start writing your story here... Express yourself freely with no limits on length or content. Write as much as your heart desires!"></textarea>
     </div>
 
     <div class="blog-options">

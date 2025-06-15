@@ -8,14 +8,21 @@ let initial_path = path.join(__dirname, "public");
 
 const app = express();
 
-// CORS headers for Vercel
+// Security headers
 app.use((req, res, next) => {
+  // CORS headers for Vercel
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
+
+  // Security headers
+  res.header("X-Content-Type-Options", "nosniff");
+  res.header("X-Frame-Options", "DENY");
+  res.header("X-XSS-Protection", "1; mode=block");
+  res.header("Referrer-Policy", "strict-origin-when-cross-origin");
 
   if (req.method === "OPTIONS") {
     res.sendStatus(200);
@@ -24,14 +31,52 @@ app.use((req, res, next) => {
   }
 });
 
+// Request logging middleware (only in development)
+if (process.env.NODE_ENV !== "production") {
+  app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    next();
+  });
+}
+
+// Rate limiting for uploads (simple implementation)
+const uploadAttempts = new Map();
+const UPLOAD_RATE_LIMIT = 10; // max 10 uploads per minute per IP
+const RATE_WINDOW = 60000; // 1 minute
+
+const checkUploadRateLimit = (req, res, next) => {
+  const clientIP = req.ip || req.connection.remoteAddress;
+  const now = Date.now();
+
+  if (!uploadAttempts.has(clientIP)) {
+    uploadAttempts.set(clientIP, []);
+  }
+
+  const attempts = uploadAttempts.get(clientIP);
+  // Remove attempts older than 1 minute
+  const recentAttempts = attempts.filter((time) => now - time < RATE_WINDOW);
+
+  if (recentAttempts.length >= UPLOAD_RATE_LIMIT) {
+    return res.status(429).json({
+      error:
+        "Too many upload attempts. Please wait a minute before trying again.",
+    });
+  }
+
+  recentAttempts.push(now);
+  uploadAttempts.set(clientIP, recentAttempts);
+  next();
+};
+
 app.use(express.static(initial_path));
-app.use(express.json());
+app.use(express.json({ limit: "1mb" })); // Limit JSON payload size
 app.use(
   fileupload({
     limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
     abortOnLimit: true,
     useTempFiles: true,
     tempFileDir: "/tmp/",
+    createParentPath: true,
   })
 );
 // Firebase config endpoint for client
@@ -101,7 +146,7 @@ const validateFile = (file) => {
   return { valid: true };
 };
 
-app.post("/upload", (req, res) => {
+app.post("/upload", checkUploadRateLimit, (req, res) => {
   try {
     if (!req.files || !req.files.image) {
       return res.status(400).json({ error: "No file uploaded" });
@@ -122,11 +167,20 @@ app.post("/upload", (req, res) => {
     // Secure upload path
     let uploadPath = path.join(__dirname, "public", "uploads", secureFilename);
 
+    // Ensure uploads directory exists (only for local development)
+    const uploadsDir = path.join(__dirname, "public", "uploads");
+    if (!require("fs").existsSync(uploadsDir)) {
+      require("fs").mkdirSync(uploadsDir, { recursive: true });
+    }
+
     // Create upload
     file.mv(uploadPath, (err) => {
       if (err) {
         console.error("File upload error:", err);
-        return res.status(500).json({ error: "Upload failed" });
+        return res.status(500).json({
+          error: "Upload failed",
+          details: err.message,
+        });
       } else {
         // Return relative path for client
         res.json(`uploads/${secureFilename}`);
@@ -134,7 +188,10 @@ app.post("/upload", (req, res) => {
     });
   } catch (error) {
     console.error("Upload endpoint error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({
+      error: "Internal server error",
+      details: error.message,
+    });
   }
 });
 
@@ -148,8 +205,11 @@ app.use((req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-  console.log(`Server Listening on port ${PORT}....`);
-});
+// Only start server if not in serverless environment
+if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Server Listening on port ${PORT}....`);
+  });
+}
 
 module.exports = app;
